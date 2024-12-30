@@ -7186,7 +7186,7 @@ func Test_GetOrganizations(t *testing.T) {
 	t.Log(organizations)
 }
 
-func Test_GetOrganizationByName(t *testing.T) {
+func Test_GetOrganizationsByName(t *testing.T) {
 	t.Parallel()
 	cfg := GetConfig(t)
 	client := NewClientWithDebug(t)
@@ -7206,7 +7206,7 @@ func Test_GetOrganizationByName(t *testing.T) {
 	t.Log(organization)
 }
 
-func Test_GetOrganizationByDomain(t *testing.T) {
+func Test_GetOrganizationsByDomain(t *testing.T) {
 	t.Parallel()
 	cfg := GetConfig(t)
 	client := NewClientWithDebug(t)
@@ -7223,6 +7223,50 @@ func Test_GetOrganizationByDomain(t *testing.T) {
 			Search: gocloak.StringP("test-inc.org"),
 		})
 	require.NoError(t, err, "GetOrganizationByDomain failed")
-	fmt.Printf("%+v", organization)
+	t.Log(organization)
+}
+
+func Test_GetOrganizationByID(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	tearDown, orgID := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	organization, err := client.GetOrganizationByID(
+		context.Background(),
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID)
+	require.NoError(t, err, "GetOrganization failed")
+	t.Log(organization)
+}
+
+func Test_UpdateOrganization(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	tearDown, orgID := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	organization, err := client.GetOrganizationByID(
+		context.Background(),
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID)
+	require.NoError(t, err, "GetOrganizationByID failed")
+
+	organization.Enable = gocloak.BoolP(false)
+
+	err = client.UpdateOrganization(
+		context.Background(),
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		*organization)
+	require.NoError(t, err, "UpdateOrganization failed")
 	t.Log(organization)
 }
