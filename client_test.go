@@ -7112,3 +7112,117 @@ func Test_RevokeToken(t *testing.T) {
 	)
 	require.NoError(t, err, "Revoke failed")
 }
+
+// -----------
+// Organizations
+// -----------
+
+func CreateOrganization(t *testing.T, client gocloak.GoCloakIface, name, alias, domain string) (func(), string) {
+	cfg := GetConfig(t)
+	token := GetAdminToken(t, client)
+
+	org := gocloak.OrganizationRepresentation{
+		Name:        gocloak.StringP(name),
+		Alias:       gocloak.StringP(alias),
+		Enable:      gocloak.BoolP(true),
+		Description: gocloak.StringP("Just a test organization"),
+		Domains: &[]gocloak.OrganizationDomainRepresentation{
+			{
+				Name:     gocloak.StringP(domain),
+				Verified: gocloak.BoolP(true),
+			},
+		},
+	}
+
+	orgID, err := client.CreateOrganization(
+		context.Background(),
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		org)
+
+	require.NoError(t, err, "CreateOrganization failed")
+
+	org.ID = &orgID
+	t.Logf("Created Organization: %+v", org)
+	tearDown := func() {
+		err := client.DeleteOrganization(
+			context.Background(),
+			token.AccessToken,
+			cfg.GoCloak.Realm,
+			orgID)
+		require.NoError(t, err, "DeleteOrganization")
+	}
+
+	return tearDown, orgID
+}
+
+func Test_CreateOrganization(t *testing.T) {
+	t.Parallel()
+	client := NewClientWithDebug(t)
+
+	tearDown, _ := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+}
+
+func Test_GetOrganizations(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	// Create two organizations
+	tearDown1, _ := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown1()
+
+	tearDown2, _ := CreateOrganization(t, client, "Another Inc", "another-inc", "another.com")
+	defer tearDown2()
+
+	organizations, err := client.GetOrganizations(
+		context.Background(),
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		gocloak.GetOrganizationsParams{})
+	require.NoError(t, err, "GetOrganizations failed")
+	t.Log(organizations)
+}
+
+func Test_GetOrganizationByName(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	tearDown, _ := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	organization, err := client.GetOrganizations(
+		context.Background(),
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		gocloak.GetOrganizationsParams{
+			Search: gocloak.StringP("Test Inc"),
+		})
+	require.NoError(t, err, "GetOrganizationByName failed")
+	t.Log(organization)
+}
+
+func Test_GetOrganizationByDomain(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	tearDown, _ := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	organization, err := client.GetOrganizations(
+		context.Background(),
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		gocloak.GetOrganizationsParams{
+			Search: gocloak.StringP("test-inc.org"),
+		})
+	require.NoError(t, err, "GetOrganizationByDomain failed")
+	fmt.Printf("%+v", organization)
+	t.Log(organization)
+}
