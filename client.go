@@ -4554,3 +4554,34 @@ func (g *GoCloak) DeleteOrganization(ctx context.Context, token, realm, idOfOrga
 
 	return checkForError(resp, err, errMessage)
 }
+
+// GetOrganization returns the organization representation of the organization with provided ID
+func (g *GoCloak) GetOrganizationByID(ctx context.Context, token, realm, idOfOrganization string) (*OrganizationRepresentation, error) {
+	const errMessage = "could not find organization"
+	var result *OrganizationRepresentation
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, token).
+		SetResult(&result).
+		Get(g.getAdminRealmURL(realm, "organizations", idOfOrganization))
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// UpdateOrganization updates the given organization
+func (g *GoCloak) UpdateOrganization(ctx context.Context, token, realm string, organization OrganizationRepresentation) error {
+	const errMessage = "could not update organization"
+
+	if NilOrEmpty(organization.ID) {
+		return errors.Wrap(errors.New("ID of an organization required"), errMessage)
+	}
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, token).
+		SetBody(organization).
+		Put(g.getAdminRealmURL(realm, "organizations", PString(organization.ID)))
+
+	return checkForError(resp, err, errMessage)
+}
