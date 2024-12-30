@@ -1455,6 +1455,28 @@ type GetOrganizationsParams struct {
 	Search              *string `json:"search,omitempty"`
 }
 
+// OrganizationDomainRepresentation is a representation of an organization's domain
+// v26: https://www.keycloak.org/docs-api/latest/rest-api/index.html#OrganizationOrganizationDomainRepresentation
+type OrganizationDomainRepresentation struct {
+	Name     *string `json:"name,omitempty"`
+	Verified *bool   `json:"verified,omitempty"`
+}
+
+// OrganizationRepresentation is a representation of an organization
+// v26: https://www.keycloak.org/docs-api/latest/rest-api/index.html#OrganizationRepresentation
+type OrganizationRepresentation struct {
+	ID                *string                             `json:"id,omitempty"`
+	Name              *string                             `json:"name,omitempty"`
+	Alias             *string                             `json:"alias,omitempty"`
+	Enable            *bool                               `json:"enabled,omitempty"`
+	Description       *string                             `json:"description,omitempty"`
+	RedirectURL       *string                             `json:"redirectUrl,omitempty"`
+	Attributes        *map[string][]string                `json:"attributes,omitempty"`
+	Domains           *[]OrganizationDomainRepresentation `json:"domains,omitempty"`
+	Members           *[]string                           `json:"members,omitempty"`
+	IdentityProviders *[]string                           `json:"identityProviders,omitempty"`
+}
+
 // prettyStringStruct returns struct formatted into pretty string
 func prettyStringStruct(t interface{}) string {
 	json, err := json.MarshalIndent(t, "", "\t")
@@ -1549,3 +1571,6 @@ func (v *CredentialRepresentation) String() string                  { return pre
 func (v *RequiredActionProviderRepresentation) String() string      { return prettyStringStruct(v) }
 func (v *BruteForceStatus) String() string                          { return prettyStringStruct(v) }
 func (v *GetClientUserSessionsParams) String() string               { return prettyStringStruct(v) }
+func (v *GetOrganizationsParams) String() string                    { return prettyStringStruct(v) }
+func (v *OrganizationDomainRepresentation) String() string          { return prettyStringStruct(v) }
+func (v *OrganizationRepresentation) String() string                { return prettyStringStruct(v) }
