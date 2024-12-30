@@ -4555,7 +4555,7 @@ func (g *GoCloak) DeleteOrganization(ctx context.Context, token, realm, idOfOrga
 	return checkForError(resp, err, errMessage)
 }
 
-// GetOrganization returns the organization representation of the organization with provided ID
+// GetOrganizationByID returns the organization representation of the organization with provided ID
 func (g *GoCloak) GetOrganizationByID(ctx context.Context, token, realm, idOfOrganization string) (*OrganizationRepresentation, error) {
 	const errMessage = "could not find organization"
 	var result *OrganizationRepresentation
