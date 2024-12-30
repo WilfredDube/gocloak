@@ -578,4 +578,10 @@ type GoCloakIface interface {
 	UpdateUsersManagementPermissions(ctx context.Context, accessToken, realm string, managementPermissions ManagementPermissionRepresentation) (*ManagementPermissionRepresentation, error)
 	// GetUsersManagementPermissions returns the management permissions for users
 	GetUsersManagementPermissions(ctx context.Context, accessToken, realm string) (*ManagementPermissionRepresentation, error)
+	// CreateOrganization creates a new Organization
+	CreateOrganization(ctx context.Context, token, realm string, organization OrganizationRepresentation) (string, error)
+	// GetOrganizations returns a paginated list of organizations filtered according to the specified parameters
+	GetOrganizations(ctx context.Context, token, realm string, params GetOrganizationsParams) ([]*OrganizationRepresentation, error)
+	// DeleteOrganization deletes the organization
+	DeleteOrganization(ctx context.Context, token, realm, idOfOrganization string) error
 }

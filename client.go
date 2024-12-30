@@ -4507,3 +4507,50 @@ func (g *GoCloak) GetUsersManagementPermissions(ctx context.Context, accessToken
 
 	return &result, nil
 }
+
+// CreateOrganization creates a new Organization
+func (g *GoCloak) CreateOrganization(ctx context.Context, token, realm string, organization OrganizationRepresentation) (string, error) {
+	const errMessage = "could not create organization"
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, token).
+		SetBody(organization).
+		Post(g.getAdminRealmURL(realm, "organizations"))
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return "", err
+	}
+
+	return getID(resp), nil
+}
+
+// GetOrganizations returns a paginated list of organizations filtered according to the specified parameters
+func (g *GoCloak) GetOrganizations(ctx context.Context, token, realm string, params GetOrganizationsParams) ([]*OrganizationRepresentation, error) {
+	const errMessage = "could not get organizations"
+
+	queryParams, err := GetQueryParams(params)
+	if err != nil {
+		return nil, errors.Wrap(err, errMessage)
+	}
+
+	var result []*OrganizationRepresentation
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, token).
+		SetQueryParams(queryParams).
+		SetResult(&result).
+		Get(g.getAdminRealmURL(realm, "organizations"))
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// DeleteOrganization deletes the organization
+func (g *GoCloak) DeleteOrganization(ctx context.Context, token, realm, idOfOrganization string) error {
+	const errMessage = "could not delete organization"
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, token).
+		Delete(g.getAdminRealmURL(realm, "organizations", idOfOrganization))
+
+	return checkForError(resp, err, errMessage)
+}
