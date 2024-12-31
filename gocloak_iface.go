@@ -584,8 +584,19 @@ type GoCloakIface interface {
 	GetOrganizations(ctx context.Context, token, realm string, params GetOrganizationsParams) ([]*OrganizationRepresentation, error)
 	// DeleteOrganization deletes the organization
 	DeleteOrganization(ctx context.Context, token, realm, idOfOrganization string) error
-	// GetOrganization returns the organization representation of the organization with provided ID
+	// GetOrganizationByID returns the organization representation of the organization with provided ID
 	GetOrganizationByID(ctx context.Context, token, realm, idOfOrganization string) (*OrganizationRepresentation, error)
 	// UpdateOrganization updates the given organization
 	UpdateOrganization(ctx context.Context, token, realm string, organization OrganizationRepresentation) error
+	// InviteUserToOrganizationByID invites an existing user to the organization, using the specified user id
+	// An invitation email will be sent to the user so SMTP settings are required in keycloak
+	InviteUserToOrganizationByID(ctx context.Context, token, realm, idOfOrganization, userID string) error
+	// InviteUserToOrganizationByEmail invites an existing user or sends a registration link to a new user, based on the provided e-mail address.
+	// If the user with the given e-mail address exists, it sends an invitation link, otherwise it sends a registration link.
+	// An invitation email will be sent to the user so SMTP settings are required in keycloak
+	InviteUserToOrganizationByEmail(ctx context.Context, token, realm, idOfOrganization string, userParams InviteeFormParams) error
+	// AddUserToOrganization adds the user with the specified id as a member of the organization
+	// Adds, or associates, an existing user with the organization. If no user is found, or if it is already associated with the organization, an error response is returned
+	// No invitation email is sent to the user
+	AddUserToOrganization(ctx context.Context, token, realm, idOfOrganization, idOfUser string) error
 }
