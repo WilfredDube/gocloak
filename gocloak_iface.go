@@ -584,7 +584,7 @@ type GoCloakIface interface {
 	GetOrganizations(ctx context.Context, token, realm string, params GetOrganizationsParams) ([]*OrganizationRepresentation, error)
 	// DeleteOrganization deletes the organization
 	DeleteOrganization(ctx context.Context, token, realm, idOfOrganization string) error
-	// GetOrganization returns the organization representation of the organization with provided ID
+	// GetOrganizationByID returns the organization representation of the organization with provided ID
 	GetOrganizationByID(ctx context.Context, token, realm, idOfOrganization string) (*OrganizationRepresentation, error)
 	// UpdateOrganization updates the given organization
 	UpdateOrganization(ctx context.Context, token, realm string, organization OrganizationRepresentation) error
