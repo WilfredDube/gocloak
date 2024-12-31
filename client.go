@@ -4683,13 +4683,12 @@ func (g *GoCloak) GetOrganizationMemberByID(ctx context.Context, token, realm, i
 // GetOrganizationMembers returns a paginated list of organization members filtered according to the specified parameters
 func (g *GoCloak) GetOrganizationMembers(ctx context.Context, token, realm, idOfOrganization string, params GetMembersParams) ([]*MemberRepresentation, error) {
 	const errMessage = "could not get organization members"
+	var result []*MemberRepresentation
 
 	queryParams, err := GetQueryParams(params)
 	if err != nil {
 		return nil, errors.Wrap(err, errMessage)
 	}
-
-	var result []*MemberRepresentation
 
 	resp, err := g.GetRequestWithBearerAuth(ctx, token).
 		SetResult(&result).
