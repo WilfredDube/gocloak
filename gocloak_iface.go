@@ -607,4 +607,8 @@ type GoCloakIface interface {
 	// Searches for auser with the given id. If one is found, and is currently a member of the organization, returns it.
 	// Otherwise,an error response with status NOT_FOUND is returned
 	GetOrganizationMemberByID(ctx context.Context, token, realm, idOfOrganization, idOfUser string) (*MemberRepresentation, error)
+	// GetOrganizationMembers returns a paginated list of organization members filtered according to the specified parameters
+	GetOrganizationMembers(ctx context.Context, token, realm, idOfOrganization string, params GetMembersParams) ([]*MemberRepresentation, error)
+	// GetMemberAssociatedOrganizations returns the organizations associated with the user that has the specified id
+	GetMemberAssociatedOrganizations(ctx context.Context, token, realm, idOfUser string) ([]*OrganizationRepresentation, error)
 }

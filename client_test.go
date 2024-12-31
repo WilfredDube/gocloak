@@ -7441,3 +7441,91 @@ func Test_GetOrganizationMemberByID(t *testing.T) {
 	require.Equal(t, *member.ID, userID)
 	require.NoError(t, err, "GetOrganizationMemberByID failed")
 }
+
+func Test_GetOrganizationMembers(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	td, userID := CreateUser(t, client)
+	defer td()
+
+	td2, userID2 := CreateUser(t, client)
+	defer td2()
+
+	tearDown, orgID := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	ctx := context.Background()
+	err := client.AddUserToOrganization(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		userID)
+	require.NoError(t, err, "AddUserToOrganization failed")
+
+	err = client.AddUserToOrganization(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		userID2)
+	require.NoError(t, err, "AddUserToOrganization failed")
+
+	members, err := client.GetOrganizationMembers(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		gocloak.GetMembersParams{})
+	require.NoError(t, err, "GetOrganizationMembers failed")
+
+	fmt.Println(members)
+	require.GreaterOrEqual(t, len(members), 1)
+}
+
+func Test_GetMemberAssociatedOrganizations(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	td, userID := CreateUser(t, client)
+	defer td()
+
+	// Create two organizations
+	tearDown1, orgID1 := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown1()
+
+	tearDown2, orgID2 := CreateOrganization(t, client, "Another Inc", "another-inc", "another.com")
+	defer tearDown2()
+
+	// Add user to both organizations
+	ctx := context.Background()
+	err := client.AddUserToOrganization(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID1,
+		userID)
+	require.NoError(t, err, "AddUserToOrganization failed")
+
+	err = client.AddUserToOrganization(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID2,
+		userID)
+	require.NoError(t, err, "AddUserToOrganization failed")
+
+	organizations, err := client.GetMemberAssociatedOrganizations(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		userID)
+	require.NoError(t, err, "GetMemberAssociatedOrganizations failed")
+
+	require.GreaterOrEqual(t, len(organizations), 1)
+}
