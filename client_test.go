@@ -7183,6 +7183,7 @@ func Test_GetOrganizations(t *testing.T) {
 		cfg.GoCloak.Realm,
 		gocloak.GetOrganizationsParams{})
 	require.NoError(t, err, "GetOrganizations failed")
+	require.Equal(t, 2, len(organizations))
 	t.Log(organizations)
 }
 
@@ -7407,4 +7408,36 @@ func Test_GetOrganizationMemberCount(t *testing.T) {
 	t.Logf("Members in Organization: %d", count)
 	require.Equal(t, 1, count)
 	require.NoError(t, err, "GetOrganizationMemberCount failed")
+}
+
+func Test_GetOrganizationMemberByID(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	td, userID := CreateUser(t, client)
+	defer td()
+
+	tearDown, orgID := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	ctx := context.Background()
+	err := client.AddUserToOrganization(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		userID)
+	require.NoError(t, err, "AddUserToOrganization failed")
+
+	member, err := client.GetOrganizationMemberByID(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		userID)
+
+	require.Equal(t, *member.ID, userID)
+	require.NoError(t, err, "GetOrganizationMemberByID failed")
 }

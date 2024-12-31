@@ -4660,3 +4660,22 @@ func (g *GoCloak) GetOrganizationMemberCount(ctx context.Context, token, realm, 
 
 	return result, err
 }
+
+// GetOrganizationMemberByID returns the member of the organization with the specified id
+// Searches for auser with the given id. If one is found, and is currently a member of the organization, returns it.
+// Otherwise,an error response with status NOT_FOUND is returned
+func (g *GoCloak) GetOrganizationMemberByID(ctx context.Context, token, realm, idOfOrganization, idOfUser string) (*MemberRepresentation, error) {
+	const errMessage = "could not get organization member by ID"
+
+	var result *MemberRepresentation
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, token).
+		SetResult(&result).
+		Get(g.getAdminRealmURL(realm, "organizations", idOfOrganization, "members", idOfUser))
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return nil, errors.Wrap(err, errMessage)
+	}
+
+	return result, err
+}

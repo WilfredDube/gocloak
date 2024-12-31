@@ -603,4 +603,8 @@ type GoCloakIface interface {
 	RemoveUserFromOrganization(ctx context.Context, token, realm, idOfOrganization, idOfUser string) error
 	// GetOrganizationMemberCount returns number of members in the organization.
 	GetOrganizationMemberCount(ctx context.Context, token, realm, idOfOrganization string) (int, error)
+	// GetOrganizationMemberByID returns the member of the organization with the specified id
+	// Searches for auser with the given id. If one is found, and is currently a member of the organization, returns it.
+	// Otherwise,an error response with status NOT_FOUND is returned
+	GetOrganizationMemberByID(ctx context.Context, token, realm, idOfOrganization, idOfUser string) (*MemberRepresentation, error)
 }
