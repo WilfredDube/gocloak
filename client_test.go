@@ -7270,3 +7270,78 @@ func Test_UpdateOrganization(t *testing.T) {
 	require.NoError(t, err, "UpdateOrganization failed")
 	t.Log(organization)
 }
+
+func Test_InviteUserToOrganizationByID(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	td, userID := CreateUser(t, client)
+	defer td()
+
+	tearDown, orgID := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	err := client.InviteUserToOrganizationByID(
+		context.Background(),
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		userID)
+	require.NoError(t, err, "InviteUserToOrganizationByID failed")
+}
+
+func Test_InviteUserToOrganizationByEmail(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	td, userID := CreateUser(t, client)
+	defer td()
+
+	tearDown, orgID := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	ctx := context.Background()
+	user, err := client.GetUserByID(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		userID)
+	require.NoError(t, err, "GetUserByID failed")
+
+	err = client.InviteUserToOrganizationByEmail(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		gocloak.InviteeFormParams{
+			Email:     user.Email,
+			FirstName: GetRandomNameP("FirstName"),
+			LastName:  GetRandomNameP("LastName"),
+		})
+	require.NoError(t, err, "InviteUserToOrganizationByEmail failed")
+}
+
+func Test_AddUserToOrganization(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	td, userID := CreateUser(t, client)
+	defer td()
+
+	tearDown, orgID := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	err := client.AddUserToOrganization(
+		context.Background(),
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		userID)
+	require.NoError(t, err, "AddUserToOrganization failed")
+}
