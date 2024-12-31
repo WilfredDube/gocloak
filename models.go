@@ -1445,6 +1445,13 @@ type GetClientUserSessionsParams struct {
 	Max   *int `json:"max,string,omitempty"`
 }
 
+// InviteeFormParams represents the form parameters used to invite a user to an organization
+type InviteeFormParams struct {
+	Email     *string `json:"email,omitempty"`
+	FirstName *string `json:"firstname,omitempty"`
+	LastName  *string `json:"lastname,omitempty"`
+}
+
 // GetOrganizationsParams represents the optional parameters for getting organizations
 type GetOrganizationsParams struct {
 	BriefRepresentation *bool   `json:"briefRepresentation,string,omitempty"`
@@ -1572,5 +1579,6 @@ func (v *RequiredActionProviderRepresentation) String() string      { return pre
 func (v *BruteForceStatus) String() string                          { return prettyStringStruct(v) }
 func (v *GetClientUserSessionsParams) String() string               { return prettyStringStruct(v) }
 func (v *GetOrganizationsParams) String() string                    { return prettyStringStruct(v) }
+func (v *InviteeFormParams) String() string                         { return prettyStringStruct(v) }
 func (v *OrganizationDomainRepresentation) String() string          { return prettyStringStruct(v) }
 func (v *OrganizationRepresentation) String() string                { return prettyStringStruct(v) }
