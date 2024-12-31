@@ -4647,7 +4647,6 @@ func (g *GoCloak) RemoveUserFromOrganization(ctx context.Context, token, realm, 
 // GetOrganizationMemberCount returns number of members in the organization.
 func (g *GoCloak) GetOrganizationMemberCount(ctx context.Context, token, realm, idOfOrganization string) (int, error) {
 	const errMessage = "could not get organization members count"
-
 	var result int
 
 	resp, err := g.GetRequestWithBearerAuth(ctx, token).
@@ -4666,7 +4665,6 @@ func (g *GoCloak) GetOrganizationMemberCount(ctx context.Context, token, realm, 
 // Otherwise,an error response with status NOT_FOUND is returned
 func (g *GoCloak) GetOrganizationMemberByID(ctx context.Context, token, realm, idOfOrganization, idOfUser string) (*MemberRepresentation, error) {
 	const errMessage = "could not get organization member by ID"
-
 	var result *MemberRepresentation
 
 	resp, err := g.GetRequestWithBearerAuth(ctx, token).
@@ -4674,7 +4672,7 @@ func (g *GoCloak) GetOrganizationMemberByID(ctx context.Context, token, realm, i
 		Get(g.getAdminRealmURL(realm, "organizations", idOfOrganization, "members", idOfUser))
 
 	if err := checkForError(resp, err, errMessage); err != nil {
-		return nil, errors.Wrap(err, errMessage)
+		return nil, err
 	}
 
 	return result, err
@@ -4683,8 +4681,8 @@ func (g *GoCloak) GetOrganizationMemberByID(ctx context.Context, token, realm, i
 // GetOrganizationMembers returns a paginated list of organization members filtered according to the specified parameters
 func (g *GoCloak) GetOrganizationMembers(ctx context.Context, token, realm, idOfOrganization string, params GetMembersParams) ([]*MemberRepresentation, error) {
 	const errMessage = "could not get organization members"
-	var result []*MemberRepresentation
 
+	var result []*MemberRepresentation
 	queryParams, err := GetQueryParams(params)
 	if err != nil {
 		return nil, errors.Wrap(err, errMessage)
@@ -4694,8 +4692,9 @@ func (g *GoCloak) GetOrganizationMembers(ctx context.Context, token, realm, idOf
 		SetResult(&result).
 		SetQueryParams(queryParams).
 		Get(g.getAdminRealmURL(realm, "organizations", idOfOrganization, "members"))
+
 	if err := checkForError(resp, err, errMessage); err != nil {
-		return nil, errors.Wrap(err, errMessage)
+		return nil, err
 	}
 
 	return result, err
@@ -4704,14 +4703,13 @@ func (g *GoCloak) GetOrganizationMembers(ctx context.Context, token, realm, idOf
 // GetMemberAssociatedOrganizations returns the organizations associated with the user that has the specified id
 func (g *GoCloak) GetMemberAssociatedOrganizations(ctx context.Context, token, realm, idOfUser string) ([]*OrganizationRepresentation, error) {
 	const errMessage = "could not get member's associated organizations"
-
 	var result []*OrganizationRepresentation
 
 	resp, err := g.GetRequestWithBearerAuth(ctx, token).
 		SetResult(&result).
 		Get(g.getAdminRealmURL(realm, "organizations", "members", idOfUser, "organizations"))
 	if err := checkForError(resp, err, errMessage); err != nil {
-		return nil, errors.Wrap(err, errMessage)
+		return nil, err
 	}
 
 	return result, err
