@@ -4589,7 +4589,7 @@ func (g *GoCloak) UpdateOrganization(ctx context.Context, token, realm string, o
 // InviteUserToOrganizationByID invites an existing user to the organization, using the specified user id
 // An invitation email will be sent to the user so SMTP settings are required in keycloak
 func (g *GoCloak) InviteUserToOrganizationByID(ctx context.Context, token, realm, idOfOrganization, userID string) error {
-	const errMessage = "could not invite user to organization"
+	const errMessage = "could not invite user to organization by id"
 
 	resp, err := g.GetRequestWithBearerAuth(ctx, token).
 		SetFormData(map[string]string{
@@ -4604,7 +4604,7 @@ func (g *GoCloak) InviteUserToOrganizationByID(ctx context.Context, token, realm
 // If the user with the given e-mail address exists, it sends an invitation link, otherwise it sends a registration link.
 // An invitation email will be sent to the user so SMTP settings are required in keycloak
 func (g *GoCloak) InviteUserToOrganizationByEmail(ctx context.Context, token, realm, idOfOrganization string, userParams InviteeFormParams) error {
-	const errMessage = "could not invite user to organization"
+	const errMessage = "could not invite user to organization by email"
 
 	if NilOrEmpty(userParams.Email) {
 		return errors.Wrap(errors.New("Email of invitee required"), errMessage)
@@ -4636,10 +4636,27 @@ func (g *GoCloak) AddUserToOrganization(ctx context.Context, token, realm, idOfO
 
 // RemoveUserFromOrganization removes the user with the specified id from the organization
 func (g *GoCloak) RemoveUserFromOrganization(ctx context.Context, token, realm, idOfOrganization, idOfUser string) error {
-	const errMessage = "could not delete organization"
+	const errMessage = "could not remove user from organization"
 
 	resp, err := g.GetRequestWithBearerAuth(ctx, token).
 		Delete(g.getAdminRealmURL(realm, "organizations", idOfOrganization, "members", idOfUser))
 
 	return checkForError(resp, err, errMessage)
+}
+
+// GetOrganizationMemberCount returns number of members in the organization.
+func (g *GoCloak) GetOrganizationMemberCount(ctx context.Context, token, realm, idOfOrganization string) (int, error) {
+	const errMessage = "could not get organization members count"
+
+	var result int
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, token).
+		SetResult(&result).
+		Get(g.getAdminRealmURL(realm, "organizations", idOfOrganization, "members", "count"))
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return -1, errors.Wrap(err, errMessage)
+	}
+
+	return result, err
 }

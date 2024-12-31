@@ -601,4 +601,6 @@ type GoCloakIface interface {
 	AddUserToOrganization(ctx context.Context, token, realm, idOfOrganization, idOfUser string) error
 	// RemoveUserFromOrganization removes the user with the specified id from the organization
 	RemoveUserFromOrganization(ctx context.Context, token, realm, idOfOrganization, idOfUser string) error
+	// GetOrganizationMemberCount returns number of members in the organization.
+	GetOrganizationMemberCount(ctx context.Context, token, realm, idOfOrganization string) (int, error)
 }

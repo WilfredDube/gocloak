@@ -7376,3 +7376,35 @@ func Test_RemoveUserFromOrganization(t *testing.T) {
 		userID)
 	require.NoError(t, err, "RemoveUserFromOrganization failed")
 }
+
+func Test_GetOrganizationMemberCount(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	td, userID := CreateUser(t, client)
+	defer td()
+
+	tearDown, orgID := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	ctx := context.Background()
+	err := client.AddUserToOrganization(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		userID)
+	require.NoError(t, err, "AddUserToOrganization failed")
+
+	count, err := client.GetOrganizationMemberCount(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID)
+
+	t.Logf("Members in Organization: %d", count)
+	require.Equal(t, 1, count)
+	require.NoError(t, err, "GetOrganizationMemberCount failed")
+}
