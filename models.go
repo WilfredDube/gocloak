@@ -1452,6 +1452,18 @@ type InviteeFormParams struct {
 	LastName  *string `json:"lastname,omitempty"`
 }
 
+// MembershipType represent the membership type of an organization member.
+// v26: https://www.keycloak.org/docs-api/latest/rest-api/index.html#MembershipType
+type MembershipType struct{}
+
+// MemberRepresentation represents a member of an organization
+// v26: https://www.keycloak.org/docs-api/latest/rest-api/index.html#MemberRepresentation
+type MemberRepresentation struct {
+	User
+	// Type not defined in the Keycloak doc so I left it unexported. Help if you have more information
+	membershipType MembershipType
+}
+
 // GetOrganizationsParams represents the optional parameters for getting organizations
 type GetOrganizationsParams struct {
 	BriefRepresentation *bool   `json:"briefRepresentation,string,omitempty"`
@@ -1580,5 +1592,7 @@ func (v *BruteForceStatus) String() string                          { return pre
 func (v *GetClientUserSessionsParams) String() string               { return prettyStringStruct(v) }
 func (v *GetOrganizationsParams) String() string                    { return prettyStringStruct(v) }
 func (v *InviteeFormParams) String() string                         { return prettyStringStruct(v) }
+func (v *MembershipType) String() string                            { return prettyStringStruct(v) }
+func (v *MemberRepresentation) String() string                      { return prettyStringStruct(v) }
 func (v *OrganizationDomainRepresentation) String() string          { return prettyStringStruct(v) }
 func (v *OrganizationRepresentation) String() string                { return prettyStringStruct(v) }
