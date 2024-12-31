@@ -599,4 +599,6 @@ type GoCloakIface interface {
 	// Adds, or associates, an existing user with the organization. If no user is found, or if it is already associated with the organization, an error response is returned
 	// No invitation email is sent to the user
 	AddUserToOrganization(ctx context.Context, token, realm, idOfOrganization, idOfUser string) error
+	// RemoveUserFromOrganization removes the user with the specified id from the organization
+	RemoveUserFromOrganization(ctx context.Context, token, realm, idOfOrganization, idOfUser string) error
 }

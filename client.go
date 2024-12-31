@@ -4633,3 +4633,13 @@ func (g *GoCloak) AddUserToOrganization(ctx context.Context, token, realm, idOfO
 
 	return checkForError(resp, err, errMessage)
 }
+
+// RemoveUserFromOrganization removes the user with the specified id from the organization
+func (g *GoCloak) RemoveUserFromOrganization(ctx context.Context, token, realm, idOfOrganization, idOfUser string) error {
+	const errMessage = "could not delete organization"
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, token).
+		Delete(g.getAdminRealmURL(realm, "organizations", idOfOrganization, "members", idOfUser))
+
+	return checkForError(resp, err, errMessage)
+}

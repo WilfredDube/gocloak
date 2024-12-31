@@ -7345,3 +7345,34 @@ func Test_AddUserToOrganization(t *testing.T) {
 		userID)
 	require.NoError(t, err, "AddUserToOrganization failed")
 }
+
+func Test_RemoveUserFromOrganization(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	td, userID := CreateUser(t, client)
+	defer td()
+
+	tearDown, orgID := CreateOrganization(t, client, "Test Inc", "test-inc", "test.com")
+	defer tearDown()
+
+	ctx := context.Background()
+
+	err := client.AddUserToOrganization(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		userID)
+	require.NoError(t, err, "AddUserToOrganization failed")
+
+	err = client.RemoveUserFromOrganization(
+		ctx,
+		token.AccessToken,
+		cfg.GoCloak.Realm,
+		orgID,
+		userID)
+	require.NoError(t, err, "RemoveUserFromOrganization failed")
+}
