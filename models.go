@@ -735,6 +735,7 @@ type RolesRepresentation struct {
 }
 
 // RealmRepresentation represents a realm
+// https://www.keycloak.org/docs-api/latest/rest-api/index.html#RealmRepresentation
 type RealmRepresentation struct {
 	AccessCodeLifespan                                        *int                      `json:"accessCodeLifespan,omitempty"`
 	AccessCodeLifespanLogin                                   *int                      `json:"accessCodeLifespanLogin,omitempty"`
@@ -829,6 +830,7 @@ type RealmRepresentation struct {
 	UserFederationMappers                                     *[]interface{}            `json:"userFederationMappers,omitempty"`
 	UserFederationProviders                                   *[]interface{}            `json:"userFederationProviders,omitempty"`
 	UserManagedAccessAllowed                                  *bool                     `json:"userManagedAccessAllowed,omitempty"`
+	OrganizationsEnabled                                      *bool                     `json:"organizationsEnabled,omitempty"`
 	Users                                                     *[]User                   `json:"users,omitempty"`
 	VerifyEmail                                               *bool                     `json:"verifyEmail,omitempty"`
 	WaitIncrementSeconds                                      *int                      `json:"waitIncrementSeconds,omitempty"`
