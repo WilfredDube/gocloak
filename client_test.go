@@ -21,12 +21,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/WilfredDube/gocloak/v13"
 	"github.com/go-resty/resty/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/pkcs12"
-
-	"github.com/Nerzal/gocloak/v13"
 )
 
 type configAdmin struct {
