@@ -38,7 +38,7 @@ go get github.com/Nerzal/gocloak/v13
 ### Importing
 
 ```go
- import "github.com/WilfredDube/gocloak/v13"
+ import "github.com/Nerzal/gocloak/v13"
 ```
 
 ### Create New User
