@@ -796,6 +796,8 @@ type RealmRepresentation struct {
 	OfflineSessionIdleTimeout                                 *int                      `json:"offlineSessionIdleTimeout,omitempty"`
 	OfflineSessionMaxLifespan                                 *int                      `json:"offlineSessionMaxLifespan,omitempty"`
 	OfflineSessionMaxLifespanEnabled                          *bool                     `json:"offlineSessionMaxLifespanEnabled,omitempty"`
+	OrganizationsEnabled                                      bool                      `json:"organizationsEnabled,omitempty"`
+	Organizations                                             *[]interface{}            `json:"organizations,omitempty"`
 	OtpPolicyAlgorithm                                        *string                   `json:"otpPolicyAlgorithm,omitempty"`
 	OtpPolicyDigits                                           *int                      `json:"otpPolicyDigits,omitempty"`
 	OtpPolicyInitialCounter                                   *int                      `json:"otpPolicyInitialCounter,omitempty"`
