@@ -1503,8 +1503,8 @@ type OrganizationRepresentation struct {
 	RedirectURL       *string                             `json:"redirectUrl,omitempty"`
 	Attributes        *map[string][]string                `json:"attributes,omitempty"`
 	Domains           *[]OrganizationDomainRepresentation `json:"domains,omitempty"`
-	Members           *[]string                           `json:"members,omitempty"`
-	IdentityProviders *[]string                           `json:"identityProviders,omitempty"`
+	Members           *[]MemberRepresentation             `json:"members,omitempty"`
+	IdentityProviders *[]IdentityProviderRepresentation   `json:"identityProviders,omitempty"`
 }
 
 // prettyStringStruct returns struct formatted into pretty string
