@@ -460,6 +460,8 @@ type ProtocolMappersConfig struct {
 	AttributeNameFormat                *string `json:"attribute.nameformat,omitempty"`
 	Single                             *string `json:"single,omitempty"`
 	Script                             *string `json:"script,omitempty"`
+	AddOrganizationAttributes          *string `json:"addOrganizationAttributes,omitempty"`
+	AddOrganizationId                  *string `json:"addOrganizationId,omitempty"`
 }
 
 // Client is a ClientRepresentation
@@ -735,6 +737,7 @@ type RolesRepresentation struct {
 }
 
 // RealmRepresentation represents a realm
+// https://www.keycloak.org/docs-api/latest/rest-api/index.html#RealmRepresentation
 type RealmRepresentation struct {
 	AccessCodeLifespan                                        *int                      `json:"accessCodeLifespan,omitempty"`
 	AccessCodeLifespanLogin                                   *int                      `json:"accessCodeLifespanLogin,omitempty"`
@@ -829,6 +832,7 @@ type RealmRepresentation struct {
 	UserFederationMappers                                     *[]interface{}            `json:"userFederationMappers,omitempty"`
 	UserFederationProviders                                   *[]interface{}            `json:"userFederationProviders,omitempty"`
 	UserManagedAccessAllowed                                  *bool                     `json:"userManagedAccessAllowed,omitempty"`
+	OrganizationsEnabled                                      *bool                     `json:"organizationsEnabled,omitempty"`
 	Users                                                     *[]User                   `json:"users,omitempty"`
 	VerifyEmail                                               *bool                     `json:"verifyEmail,omitempty"`
 	WaitIncrementSeconds                                      *int                      `json:"waitIncrementSeconds,omitempty"`
@@ -1501,8 +1505,8 @@ type OrganizationRepresentation struct {
 	RedirectURL       *string                             `json:"redirectUrl,omitempty"`
 	Attributes        *map[string][]string                `json:"attributes,omitempty"`
 	Domains           *[]OrganizationDomainRepresentation `json:"domains,omitempty"`
-	Members           *[]string                           `json:"members,omitempty"`
-	IdentityProviders *[]string                           `json:"identityProviders,omitempty"`
+	Members           *[]MemberRepresentation             `json:"members,omitempty"`
+	IdentityProviders *[]IdentityProviderRepresentation   `json:"identityProviders,omitempty"`
 }
 
 // prettyStringStruct returns struct formatted into pretty string

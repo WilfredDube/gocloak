@@ -4523,6 +4523,22 @@ func (g *GoCloak) CreateOrganization(ctx context.Context, token, realm string, o
 	return getID(resp), nil
 }
 
+// Adds the identity provider with the specified id to the organization
+// POST /admin/realms/{realm}/organizations/{id}/identity-providers
+func (g *GoCloak) AddIdentityProviderToOrganization(ctx context.Context, token, realm string, organizationID, identityProviderAlias string) error {
+	const errMessage = "could not add identity provider to organization"
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, token).
+		SetBody(identityProviderAlias).
+		Post(g.getAdminRealmURL(realm, "organizations", organizationID, "identity-providers"))
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetOrganizations returns a paginated list of organizations filtered according to the specified parameters
 func (g *GoCloak) GetOrganizations(ctx context.Context, token, realm string, params GetOrganizationsParams) ([]*OrganizationRepresentation, error) {
 	const errMessage = "could not get organizations"
